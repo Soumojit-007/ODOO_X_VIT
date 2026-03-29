@@ -18,13 +18,19 @@ if (env.app.nodeEnv !== "production") {
 }
 
 export const connectDB = async () => {
-  try {
-    await prisma.$connect();
-    logger.info("✅ Database connected successfully");
-  } catch (error) {
-    logger.error("❌ Database connection failed", error);
-    process.exit(1);
+  let retries = 5;
+
+  while (retries) {
+    try {
+      await prisma.$connect();
+      console.log("✅ DB connected");
+      break;
+    } catch (err) {
+      console.error("DB connection failed, retrying...", err);
+      retries -= 1;
+      await new Promise((res) => setTimeout(res, 3000));
+    }
   }
-};
+};;
 
 export default prisma;

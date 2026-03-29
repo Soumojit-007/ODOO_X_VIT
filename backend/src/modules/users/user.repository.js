@@ -18,5 +18,14 @@ export const updateUser = (id, data) => {
 export const getUsersByCompany = (companyId) => {
   return prisma.user.findMany({
     where: { companyId },
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      companyId: true,
+      managerId: true,
+      isActive: true,
+      createdAt: true,
+    },
   });
 };

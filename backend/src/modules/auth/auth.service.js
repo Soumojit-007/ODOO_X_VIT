@@ -68,6 +68,7 @@ export const login = async (data) => {
   const user = await findUserByEmail(data.email);
 
   if (!user) throw new Error("Invalid credentials");
+  if(!user.isActive) throw new Error("User not active..")
 
   const isMatch = await bcrypt.compare(data.password, user.password);
   if (!isMatch) throw new Error("Invalid credentials");

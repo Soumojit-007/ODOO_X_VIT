@@ -14,7 +14,7 @@ export const createUser = async (data, currentUser) => {
     role: data.role,
     managerId: data.managerId || null,
     companyId: currentUser.companyId,
-    isActive: false,
+    isActive: true,
   });
 };
 
