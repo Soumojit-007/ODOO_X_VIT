@@ -1,0 +1,72 @@
+# -----------------------------
+# Dependencies
+# -----------------------------
+backend/node_modules/
+backend/node_modules/.prisma/
+
+# -----------------------------
+# Environment Variables
+# -----------------------------
+backend/.env
+backend/.env.*
+backend/.env.local
+!.env.example
+
+# -----------------------------
+# Prisma Generated
+# -----------------------------
+backend/src/generated/
+
+# -----------------------------
+# Logs
+# -----------------------------
+backend/logs/
+*.log
+npm-debug.log*
+
+# -----------------------------
+# Build
+# -----------------------------
+backend/dist/
+backend/build/
+*.tsbuildinfo
+
+# -----------------------------
+# OS
+# -----------------------------
+.DS_Store
+Thumbs.db
+
+# -----------------------------
+# IDE
+# -----------------------------
+.vscode/
+.idea/
+
+# -----------------------------
+# Redis
+# -----------------------------
+backend/dump.rdb
+backend/appendonly.aof
+
+# -----------------------------
+# Uploads
+# -----------------------------
+backend/uploads/
+
+# -----------------------------
+# Coverage
+# -----------------------------
+backend/coverage/
+*.lcov
+
+# -----------------------------
+# Docker
+# -----------------------------
+docker-compose.override.yml
+
+# -----------------------------
+# Misc
+# -----------------------------
+*.tmp
+*.swp

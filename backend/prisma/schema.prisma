@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  EMPLOYEE
+}
+
+enum ExpenseStatus {
+  DRAFT
+  SUBMITTED
+  WAITING_APPROVAL
+  APPROVED
+  REJECTED
+}
+
+enum ApprovalStatus {
+  APPROVED
+  REJECTED
+}
+
+model Company {
+  id           String   @id @default(uuid())
+  name         String
+  country      String
+  baseCurrency String
+  users        User[]
+  expenses     Expense[]
+  rules        ApprovalRule[]
+  createdAt    DateTime @default(now())
+}
+
+model User {
+  id         String   @id @default(uuid())
+  email      String   @unique
+  password   String
+  role       Role
+  companyId  String
+  managerId  String?
+  isActive   Boolean  @default(false)
+
+  company    Company  @relation(fields: [companyId], references: [id])
+  manager    User?    @relation("ManagerRelation", fields: [managerId], references: [id])
+  subordinates User[] @relation("ManagerRelation")
+
+  expenses   Expense[]
+  approvals  ApprovalTransaction[]
+
+  createdAt  DateTime @default(now())
+
+  @@index([companyId])
+}
+
+model Expense {
+  id               String   @id @default(uuid())
+  userId           String
+  companyId        String
+
+  amount           Float
+  currency         String
+  convertedAmount  Float
+
+  category         String
+  description      String
+  date             DateTime
+  paidBy           String
+  remarks          String?
+
+  receiptUrl       String?
+
+  status           ExpenseStatus
+
+  user             User     @relation(fields: [userId], references: [id])
+  company          Company  @relation(fields: [companyId], references: [id])
+
+  approvals        ApprovalTransaction[]
+
+  createdAt        DateTime @default(now())
+
+  @@index([companyId])
+  @@index([status])
+}
+
+model ApprovalRule {
+  id                  String   @id @default(uuid())
+  companyId           String
+  minAmount           Float
+  maxAmount           Float
+  category            String
+  isManagerApprover   Boolean
+
+  steps               ApprovalStep[]
+
+  company             Company @relation(fields: [companyId], references: [id])
+
+  createdAt           DateTime @default(now())
+}
+
+model ApprovalStep {
+  id                   String   @id @default(uuid())
+  ruleId               String
+  level                Int
+  approverRole         Role
+  isParallel           Boolean
+  minApprovalsRequired Int
+
+  rule                 ApprovalRule @relation(fields: [ruleId], references: [id])
+}
+
+model ApprovalTransaction {
+  id         String   @id @default(uuid())
+  expenseId  String
+  approverId String
+  status     ApprovalStatus
+  comment    String?
+  level      Int
+
+  expense    Expense @relation(fields: [expenseId], references: [id])
+  approver   User    @relation(fields: [approverId], references: [id])
+
+  createdAt  DateTime @default(now())
+
+  @@index([expenseId])
+}
